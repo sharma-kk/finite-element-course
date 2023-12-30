@@ -47,9 +47,33 @@ def vandermonde_matrix(cell, degree, points, grad=False):
     <ex-vandermonde>`.
     """
 
-    raise NotImplementedError
+    def vrow1d(point, degree):
+        vec = np.zeros(degree+1)
+        for i in range(degree+1):
+            vec[i] = point[0]**i
+        return vec
+    
+    def vrow2d(point, degree):
+        vec = []
+        for n in range(degree+1):
+            for i in range(n+1):
+                vec.append(point[0]**(n-i)*point[1]**i)
+        return np.array(vec)
 
+    points = np.array(points)
+    m = points.shape[0]
+    V = []
 
+    if cell.dim == 1:
+        for i in range(m):
+            V.append(vrow1d(points[i], degree))
+        return np.array(V)
+    else:
+        for i in range(m):
+            V.append(vrow2d(points[i], degree))
+        return np.array(V)
+    
+    
 class FiniteElement(object):
     def __init__(self, cell, degree, nodes, entity_nodes=None):
         """A finite element defined over cell.
