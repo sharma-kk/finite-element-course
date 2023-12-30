@@ -140,7 +140,9 @@ class FiniteElement(object):
 
         """
 
-        raise NotImplementedError
+        points = np.array(points)
+        vand_m = vandermonde_matrix(self.cell, self.degree, points)
+        return vand_m @ self.basis_coefs
 
     def interpolate(self, fn):
         """Interpolate fn onto this finite element by evaluating it
@@ -179,7 +181,10 @@ class LagrangeElement(FiniteElement):
         <ex-lagrange-element>`.
         """
 
-        raise NotImplementedError
+        self.cell = cell
+        self.degree = degree
+
+        nodes = lagrange_points(self.cell, self.degree)
         # Use lagrange_points to obtain the set of nodes.  Once you
         # have obtained nodes, the following line will call the
         # __init__ method on the FiniteElement class to set up the
