@@ -62,18 +62,18 @@ def vandermonde_matrix(cell, degree, points, grad=False):
 
     points = np.array(points)
     m = points.shape[0]
-    V = []
+    vand_m = []
 
     if cell.dim == 1:
         for i in range(m):
-            V.append(vrow1d(points[i], degree))
-        return np.array(V)
+            vand_m.append(vrow1d(points[i], degree))
+        return np.array(vand_m)
     else:
         for i in range(m):
-            V.append(vrow2d(points[i], degree))
-        return np.array(V)
+            vand_m.append(vrow2d(points[i], degree))
+        return np.array(vand_m)
     
-    
+
 class FiniteElement(object):
     def __init__(self, cell, degree, nodes, entity_nodes=None):
         """A finite element defined over cell.
@@ -114,8 +114,8 @@ class FiniteElement(object):
         # Replace this exception with some code which sets
         # self.basis_coefs
         # to an array of polynomial coefficients defining the basis functions.
-        raise NotImplementedError
-
+        vand_m = vandermonde_matrix(self.cell, self.degree, self.nodes)
+        self.basis_coefs = np.linalg.inv(vand_m)
         #: The number of nodes in this element.
         self.node_count = nodes.shape[0]
 
