@@ -48,30 +48,44 @@ def vandermonde_matrix(cell, degree, points, grad=False):
     """
 
     def vrow1d(point, degree):
-        vec = np.zeros(degree+1)
-        for i in range(degree+1):
-            vec[i] = point[0]**i
-        return vec
+        return np.array([point[0]**i for i in range(degree + 1)])
     
     def vrow2d(point, degree):
-        vec = []
-        for n in range(degree+1):
-            for i in range(n+1):
-                vec.append(point[0]**(n-i)*point[1]**i)
-        return np.array(vec)
-
+        return np.array([point[0]**(n-i)*point[1]**i for n in range(degree + 1) 
+                         for i in range(n+1)])
+    
     points = np.array(points)
-    m = points.shape[0]
-    vand_m = []
 
     if cell.dim == 1:
-        for i in range(m):
-            vand_m.append(vrow1d(points[i], degree))
-        return np.array(vand_m)
+        return np.array([vrow1d(points[i], degree) for i in range(points.shape[0])])
     else:
-        for i in range(m):
-            vand_m.append(vrow2d(points[i], degree))
-        return np.array(vand_m)
+        return np.array([vrow2d(points[i], degree) for i in range(points.shape[0])])
+
+    # def vrow1d(point, degree):
+    #     vec = np.zeros(degree+1)
+    #     for i in range(degree+1):
+    #         vec[i] = point[0]**i
+    #     return vec
+    
+    # def vrow2d(point, degree):
+    #     vec = []
+    #     for n in range(degree+1):
+    #         for i in range(n+1):
+    #             vec.append(point[0]**(n-i)*point[1]**i)
+    #     return np.array(vec)
+
+    # points = np.array(points)
+    # m = points.shape[0]
+    # vand_m = []
+
+    # if cell.dim == 1:
+    #     for i in range(m):
+    #         vand_m.append(vrow1d(points[i], degree))
+    #     return np.array(vand_m)
+    # else:
+    #     for i in range(m):
+    #         vand_m.append(vrow2d(points[i], degree))
+    #     return np.array(vand_m)
     
 
 class FiniteElement(object):
