@@ -47,47 +47,30 @@ def vandermonde_matrix(cell, degree, points, grad=False):
     <ex-vandermonde>`.
     """
 
-    def vrow1d(point, degree):
-        return np.array([point[0]**i for i in range(degree + 1)])
+    def vrow1d(point, degree, grad):
+        if grad:
+            return np.array([[i*point[0]**(i-1) if i >= 1 else 0] for i in range(degree + 1)])
+        else:
+            return np.array([point[0]**i for i in range(degree + 1)])
     
-    def vrow2d(point, degree):
-        return np.array([point[0]**(n-i)*point[1]**i for n in range(degree + 1) 
+    def vrow2d(point, degree, grad):
+        if grad:
+            return np.array([[(n-i)*point[0]**(n-i-1)*point[1]**i if n-i >= 1 else 0, 
+                              point[0]**(n-i)*i*point[1]**(i-1) if i >= 1 else 0]
+                              for n in range(degree + 1) 
+                         for i in range(n+1)])
+        else:
+            return np.array([point[0]**(n-i)*point[1]**i for n in range(degree + 1) 
                          for i in range(n+1)])
     
     points = np.array(points)
 
     if cell.dim == 1:
-        return np.array([vrow1d(points[i], degree) for i in range(points.shape[0])])
+        return np.array([vrow1d(points[i], degree, grad) for i in range(points.shape[0])])
     else:
-        return np.array([vrow2d(points[i], degree) for i in range(points.shape[0])])
-
-    # def vrow1d(point, degree):
-    #     vec = np.zeros(degree+1)
-    #     for i in range(degree+1):
-    #         vec[i] = point[0]**i
-    #     return vec
+        return np.array([vrow2d(points[i], degree, grad) for i in range(points.shape[0])])
     
-    # def vrow2d(point, degree):
-    #     vec = []
-    #     for n in range(degree+1):
-    #         for i in range(n+1):
-    #             vec.append(point[0]**(n-i)*point[1]**i)
-    #     return np.array(vec)
-
-    # points = np.array(points)
-    # m = points.shape[0]
-    # vand_m = []
-
-    # if cell.dim == 1:
-    #     for i in range(m):
-    #         vand_m.append(vrow1d(points[i], degree))
-    #     return np.array(vand_m)
-    # else:
-    #     for i in range(m):
-    #         vand_m.append(vrow2d(points[i], degree))
-    #     return np.array(vand_m)
     
-
 class FiniteElement(object):
     def __init__(self, cell, degree, nodes, entity_nodes=None):
         """A finite element defined over cell.
